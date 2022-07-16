@@ -20,7 +20,7 @@ namespace PowerController
 		{
 			Listing_Standard listing_Standard = new Listing_Standard();
 			listing_Standard.Begin(inRect);
-			listing_Standard.Label($"Desired Surplus: {Settings.DesiredSurplus - Settings.Tolerance}-{Settings.DesiredSurplus + Settings.Tolerance}W");
+			listing_Standard.Label($"Desired Surplus: {Settings.DesiredSurplus - Settings.Tolerance}W - {Settings.DesiredSurplus + Settings.Tolerance}W");
 			Settings.DesiredSurplus = (float)Math.Round(listing_Standard.Slider(Settings.DesiredSurplus / 100f, 1, 50), 0) * 100f;
 			listing_Standard.Label($"Minimal Throtle: {Settings.MinimalThrotle * 100}%");
 			Settings.MinimalThrotle = (float)Math.Round(listing_Standard.Slider(Settings.MinimalThrotle, 0.1f, 1.0f), 1);
@@ -33,7 +33,7 @@ namespace PowerController
 
 	class PowerControllerSettings : ModSettings
 	{
-		public readonly float Tolerance = 50f;
+		public readonly float Tolerance = 10f;
 
 		public float DesiredSurplus = 1000f;
 		public float MinimalThrotle = 0.1f;

@@ -76,28 +76,15 @@ namespace PowerController
 				}
 				else if (error > Tolerance || error < -Tolerance)
 				{
-					List<CompPowerController> AvailibleGenerators = new List<CompPowerController>();
 					foreach (CompPowerTrader compPower in __instance.powerComps)
 					{
 						CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
 						if (Controller != null)
 						{
-							if (error > 0 && !Controller.IsMinThrottle()) AvailibleGenerators.Add(Controller);
-							else if (error < 0 && !Controller.IsMaxThrottle()) AvailibleGenerators.Add(Controller);
+							if (error > 0 && !Controller.IsMinThrottle()) error += Controller.ThrottleDown();
+							else if (error < 0 && !Controller.IsMaxThrottle()) error += Controller.ThrottleUp();
+							if (error < Tolerance && error > Tolerance) break;
 						}
-						else if (!compPower.PowerOn && compPower.parent.GetComp<CompFlickable>().SwitchIsOn) error -= compPower.PowerOutput;
-					}
-					foreach (CompPowerController Controller in AvailibleGenerators)
-					{
-						if (error > 0)
-						{
-							error += Controller.ThrottleDown();
-						}
-						else if (error < 0)
-						{
-							error += Controller.ThrottleUp();
-						}
-						if (error == 0) break;
 					}
 				}
 			}
