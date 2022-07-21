@@ -74,7 +74,7 @@ namespace PowerController
 						}
 					}
 				}
-				else if (error > Tolerance || error < -Tolerance)
+				else if (error > Tolerance || error < -Tolerance || error + PowerControllerMod.Settings.DesiredSurplus < 0)
 				{
 					foreach (CompPowerTrader compPower in __instance.powerComps)
 					{
@@ -83,7 +83,7 @@ namespace PowerController
 						{
 							if (error > 0 && !Controller.IsMinThrottle()) error += Controller.ThrottleDown();
 							else if (error < 0 && !Controller.IsMaxThrottle()) error += Controller.ThrottleUp();
-							if (error < Tolerance && error > Tolerance) break;
+							if (error < Tolerance && error > Tolerance && error + PowerControllerMod.Settings.DesiredSurplus > 0) break;
 						}
 					}
 				}

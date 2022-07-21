@@ -20,8 +20,10 @@ namespace PowerController
 		{
 			Listing_Standard listing_Standard = new Listing_Standard();
 			listing_Standard.Begin(inRect);
-			listing_Standard.Label($"Desired Surplus: {Settings.DesiredSurplus - Settings.Tolerance}W - {Settings.DesiredSurplus + Settings.Tolerance}W");
+			listing_Standard.Label($"Desired Surplus: {Math.Max(Settings.DesiredSurplus - Settings.Tolerance, 0)}W - {Settings.DesiredSurplus + Settings.Tolerance}W");
 			Settings.DesiredSurplus = (float)Math.Round(listing_Standard.Slider(Settings.DesiredSurplus / 100f, 1, 50), 0) * 100f;
+			listing_Standard.Label($"Tolerance: {Settings.Tolerance}");
+			Settings.Tolerance = (float)Math.Round(listing_Standard.Slider(Settings.Tolerance / 10f, 1, 50), 0) * 10f;
 			listing_Standard.Label($"Minimal Throtle: {Settings.MinimalThrotle * 100}%");
 			Settings.MinimalThrotle = (float)Math.Round(listing_Standard.Slider(Settings.MinimalThrotle, 0.1f, 1.0f), 1);
 			listing_Standard.Label($"Maximal Throtle: {Settings.MaximalThrotle * 100}%");
@@ -33,15 +35,15 @@ namespace PowerController
 
 	class PowerControllerSettings : ModSettings
 	{
-		public readonly float Tolerance = 10f;
-
 		public float DesiredSurplus = 1000f;
+		public float Tolerance = 10f;
 		public float MinimalThrotle = 0.1f;
 		public float MaximalThrotle = 1.0f;
 		public bool FillBatteries = true;
 		public override void ExposeData()
 		{
 			Scribe_Values.Look(ref DesiredSurplus, "DesiredSurplus", defaultValue: 1000f);
+			Scribe_Values.Look(ref Tolerance, "Tolerance", defaultValue: 10f);
 			Scribe_Values.Look(ref MinimalThrotle, "MinimalThrotle", defaultValue: 0.1f);
 			Scribe_Values.Look(ref MaximalThrotle, "MaximalThrotle", defaultValue: 1.0f);
 			Scribe_Values.Look(ref FillBatteries, "FillBatteries", defaultValue: true);
