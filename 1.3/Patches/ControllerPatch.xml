@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Patch>
 	<Operation Class="PatchOperationAdd">
-		<xpath>/Defs/ThingDef/comps[li/compClass="CompPowerPlant" or li/compClass="GasNetwork.CompGasPowerPlant" or li/compClass="VanillaPowerExpanded.CompPowerPlantNuclear"]</xpath>
+		<xpath>/Defs/ThingDef/comps[li/compClass="CompPowerPlant" and li/@Class="CompProperties_Refuelable"]</xpath>
 		<success>Always</success>
 		<value>
 			<li>
 				<compClass>PowerController.CompPowerController</compClass>
+			</li>
+			<li Class="CompProperties_Battery">
+				<compClass>PowerController.CompInternalBattery</compClass>
+				<storedEnergyMax>10</storedEnergyMax>
+				<efficiency>50</efficiency>
 			</li>
 		</value>
 	</Operation>
