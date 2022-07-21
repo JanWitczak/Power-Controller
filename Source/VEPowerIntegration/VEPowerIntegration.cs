@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using Verse;
-using RimWorld;
 using VanillaPowerExpanded;
 using GasNetwork;
 using System.Reflection;
