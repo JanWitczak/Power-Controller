@@ -2,7 +2,6 @@
 <Patch>
 	<Operation Class="PatchOperationAdd">
 		<xpath>/Defs/ThingDef/comps[li/compClass="CompPowerPlant" and li/@Class="CompProperties_Refuelable"]</xpath>
-		<success>Always</success>
 		<value>
 			<li>
 				<compClass>PowerController.CompPowerController</compClass>

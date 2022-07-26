@@ -3,88 +3,88 @@ using System.Reflection;
 using Verse;
 using RimWorld;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 
 namespace PowerController
 {
-	public class HarmonyPatches : Verse.Mod
+	[StaticConstructorOnStartup]
+	static class HarmonyPatches
 	{
-		public HarmonyPatches(ModContentPack content) : base(content)
+		static HarmonyPatches()
 		{
-			var harmony = new Harmony("Azuraal.PowerController");
-			var assembly = Assembly.GetExecutingAssembly();
+			Harmony harmony = new Harmony("Azuraal.PowerController");
+			Assembly assembly = Assembly.GetExecutingAssembly();
 			harmony.PatchAll(assembly);
 		}
+	}
 
-		[HarmonyPatch(typeof(CompPowerPlant), "UpdateDesiredPowerOutput")]
-		class PowerPlantPatch
+	[HarmonyPatch(typeof(CompPowerPlant), "UpdateDesiredPowerOutput")]
+	class PowerPlantPatch
+	{
+		static void Postfix(ref CompPowerPlant __instance)
 		{
-			static void Postfix(ref CompPowerPlant __instance)
+			CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
+			if (Controller != null && __instance.PowerOutput != 0)
 			{
-				CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
-				if (Controller != null && __instance.PowerOutput != 0)
-				{
-					__instance.PowerOutput = (-__instance.Props.basePowerConsumption) * Controller.Throttle;
-				}
+				__instance.PowerOutput = (-__instance.Props.basePowerConsumption) * Controller.Throttle;
 			}
 		}
+	}
 
-		[HarmonyPatch(typeof(CompRefuelable), "get_ConsumptionRatePerTick")]
-		class RefuelableConsumptionRatePerTickPatch
+	[HarmonyPatch(typeof(CompRefuelable), "get_ConsumptionRatePerTick")]
+	class RefuelableConsumptionRatePerTickPatch
+	{
+		static void Postfix(ref float __result, ref CompRefuelable __instance)
 		{
-			static void Postfix(ref float __result, ref CompRefuelable __instance)
+			CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
+			if (Controller != null)
 			{
-				CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
-				if (Controller != null)
-				{
-					__result *= Controller.Throttle;
-				}
+				__result *= Controller.Throttle;
 			}
 		}
+	}
 
-		[HarmonyPatch(typeof(CompRefuelable), "CompInspectStringExtra")]
-		class RefuelableInspectPatch
+	[HarmonyPatch(typeof(CompRefuelable), "CompInspectStringExtra")]
+	class RefuelableInspectPatch
+	{
+		private static Regex regex = new Regex("\\((.+)\\)");
+		static void Postfix(ref string __result, ref CompRefuelable __instance)
 		{
-			private static Regex regex = new Regex("\\((.+)\\)");
-			static void Postfix(ref string __result, ref CompRefuelable __instance)
+			CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
+			if (Controller != null)
 			{
-				CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
-				if (Controller != null)
-				{
-					__result = regex.Replace(__result, $"({((int)(__instance.Fuel / __instance.Props.fuelConsumptionRate * 60000f / Controller.Throttle)).ToStringTicksToPeriod()})");
-				}
+				__result = regex.Replace(__result, $"({((int)(__instance.Fuel / __instance.Props.fuelConsumptionRate * 60000f / Controller.Throttle)).ToStringTicksToPeriod()})");
 			}
 		}
+	}
 
-		[HarmonyPatch(typeof(PowerNet), "PowerNetTick")]
-		class PowerNetPatch
+	[HarmonyPatch(typeof(PowerNet), "PowerNetTick")]
+	class PowerNetPatch
+	{
+		private static float Tolerance => PowerControllerMod.Settings.Tolerance;
+		static void Postfix(ref PowerNet __instance)
 		{
-			private static float Tolerance => PowerControllerMod.Settings.Tolerance;
-			static void Postfix(ref PowerNet __instance)
+			float error = (__instance.CurrentEnergyGainRate() * 60000f) - PowerControllerMod.Settings.DesiredSurplus;
+			if (PowerControllerMod.Settings.FillBatteries && !__instance.batteryComps.TrueForAll(x => x.StoredEnergyPct == 1.0f))
 			{
-				float error = (__instance.CurrentEnergyGainRate() * 60000f) - PowerControllerMod.Settings.DesiredSurplus;
-				if (PowerControllerMod.Settings.FillBatteries && !__instance.batteryComps.TrueForAll(x => x.StoredEnergyPct == 1.0f))
+				foreach (CompPower compPower in __instance.powerComps)
 				{
-					foreach (CompPower compPower in __instance.powerComps)
+					CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
+					if (Controller != null && !Controller.IsMaxThrottle())
 					{
-						CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
-						if (Controller != null && !Controller.IsMaxThrottle())
-						{
-							Controller.ThrottleUp();
-						}
+						Controller.ThrottleUp();
 					}
 				}
-				else if (error > Tolerance || error < -Tolerance || error + PowerControllerMod.Settings.DesiredSurplus < 0)
+			}
+			else if (error > Tolerance || error < -Tolerance || error + PowerControllerMod.Settings.DesiredSurplus < 0)
+			{
+				foreach (CompPowerTrader compPower in __instance.powerComps)
 				{
-					foreach (CompPowerTrader compPower in __instance.powerComps)
+					CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
+					if (Controller != null)
 					{
-						CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
-						if (Controller != null)
-						{
-							if (error > 0 && !Controller.IsMinThrottle()) error += Controller.ThrottleDown();
-							else if (error < 0 && !Controller.IsMaxThrottle()) error += Controller.ThrottleUp();
-							if (error < Tolerance && error > Tolerance && error + PowerControllerMod.Settings.DesiredSurplus > 0) break;
-						}
+						if (error > 0 && !Controller.IsMinThrottle()) error += Controller.ThrottleDown();
+						else if (error < 0 && !Controller.IsMaxThrottle()) error += Controller.ThrottleUp();
+						if (error < Tolerance && error > Tolerance && error + PowerControllerMod.Settings.DesiredSurplus > 0) break;
 					}
 				}
 			}
