@@ -6,7 +6,7 @@ namespace PowerController
 {
 	public class CompPowerController : ThingComp
 	{
-		public float Throttle { get; private set; } = 1.0f;
+		public float Throttle = 1.0f;
 		private CompPowerTrader PowerTrader => parent.GetComp<CompPowerTrader>();
 		public void SetThrottle(float throttle)
 		{
@@ -44,6 +44,10 @@ namespace PowerController
 		{
 			return $"Throttle: {Throttle.ToStringPercent()}";
 		}
+		public override void PostExposeData()
+		{
+			Scribe_Values.Look(ref Throttle, "throttle");
+		}
 	}
 
 	public class CompInternalBattery : CompPowerBattery
@@ -55,6 +59,19 @@ namespace PowerController
 		public override IEnumerable<Gizmo> CompGetGizmosExtra()
 		{
 			return new List<Gizmo>();
+		}
+		public override void PostExposeData()
+		{
+			if (Scribe.mode == LoadSaveMode.Saving)
+			{
+				Scribe.saver.WriteElement("storedPower", StoredEnergy.ToString());
+			}
+			else if (Scribe.mode == LoadSaveMode.LoadingVars)
+			{
+				float ReadEnergy = 0;
+				Scribe_Values.Look(ref ReadEnergy, "storedPower");
+				AddEnergy(ReadEnergy);
+			}
 		}
 	}
 }
