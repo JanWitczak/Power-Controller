@@ -25,7 +25,7 @@ namespace PowerController
 			CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
 			if (Controller != null && __instance.PowerOutput != 0)
 			{
-				__instance.PowerOutput = (-__instance.Props.basePowerConsumption) * Controller.Throttle;
+				__instance.PowerOutput = (-__instance.Props.PowerConsumption) * Controller.Throttle;
 			}
 		}
 	}

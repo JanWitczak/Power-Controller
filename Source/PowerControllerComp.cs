@@ -22,12 +22,12 @@ namespace PowerController
 		}
 		public float ThrottleUp()
 		{
-			SetThrottle(Throttle + (10f / -PowerTrader.Props.basePowerConsumption));
+			SetThrottle(Throttle + (10f / -PowerTrader.Props.PowerConsumption));
 			return 10f;
 		}
 		public float ThrottleDown()
 		{
-			SetThrottle(Throttle - (10f / -PowerTrader.Props.basePowerConsumption));
+			SetThrottle(Throttle - (10f / -PowerTrader.Props.PowerConsumption));
 			return -10f;
 		}
 		public bool IsMaxThrottle()
