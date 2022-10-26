@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<RootNamespace>PowerController</RootNamespace>
+		<AssemblyName>VEHelixienIntegration</AssemblyName>
+  		<TargetFramework>net472</TargetFramework>
+		<FileAlignment>512</FileAlignment>
+		<Deterministic>true</Deterministic>
+		<Configuration>Release</Configuration>
+		<DebugType>none</DebugType>
+		<Optimize>true</Optimize>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<OutputPath>../../VEHelixien/Assemblies/</OutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.4.*" />
+		<PackageReference Include="Lib.Harmony" Version="2.2.2"/>
+		<Reference Include="PipeSystem.dll" Private="false"/>
+		<Reference Include="PowerController.dll">
+			<HintPath>..\..\1.4\Assemblies\PowerController.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
+</Project>
