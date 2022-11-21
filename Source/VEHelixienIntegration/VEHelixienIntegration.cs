@@ -6,9 +6,9 @@ using Verse;
 namespace PowerController
 {
 	[StaticConstructorOnStartup]
-	static class VEPowerHarmonyPatches
+	static class VEHelixienHarmonyPatches
 	{
-		static VEPowerHarmonyPatches()
+		static VEHelixienHarmonyPatches()
 		{
 			Harmony harmony = new Harmony("Azuraal.PowerController.VEPowerIntegration");
 			Assembly assembly = Assembly.GetExecutingAssembly();
@@ -17,7 +17,7 @@ namespace PowerController
 	}
 
 	[HarmonyPatch(typeof(CompResourceTrader), "get_Consumption")]
-	class NuclearPowerPlantPatch
+	class HelixienPowerPlantPatch
 	{
 		static void Postfix(ref float __result, ref CompResourceTrader __instance)
 		{

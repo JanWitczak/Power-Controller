@@ -8,5 +8,6 @@
 		<li>1.4</li>
 		<li IfModActive="VanillaExpanded.VFEPower">VEPower</li>
 		<li IfModActive="VanillaExpanded.HelixienGas">VEHelixien</li>
+		<li ifModActive="Dubwise.Rimefeller">Rimefeller</li>
 	</v1.4>
 </loadFolders>
