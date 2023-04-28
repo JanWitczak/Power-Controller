@@ -4,6 +4,45 @@ using Verse;
 
 namespace PowerController
 {
+	public class ThrottleManager : MapComponent
+	{
+		private static float Tolerance => PowerControllerMod.Settings.Tolerance;
+		public ThrottleManager(Map map) : base(map)
+		{
+
+		}
+		public override void MapComponentTick()
+		{
+			foreach(PowerNet powerNet in map.powerNetManager.AllNetsListForReading)
+			{
+				float error = (powerNet.CurrentEnergyGainRate() * 60000f) - PowerControllerMod.Settings.DesiredSurplus;
+				if (PowerControllerMod.Settings.FillBatteries && !powerNet.batteryComps.TrueForAll(x => x.StoredEnergyPct == 1.0f))
+				{
+					foreach (CompPower compPower in powerNet.powerComps)
+					{
+						CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
+						if (Controller != null && !Controller.IsMaxThrottle())
+						{
+							Controller.ThrottleUp();
+						}
+					}
+				}
+				else if (error > Tolerance || error < -Tolerance || error + PowerControllerMod.Settings.DesiredSurplus < 0)
+				{
+					foreach (CompPowerTrader compPower in powerNet.powerComps)
+					{
+						CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
+						if (Controller != null)
+						{
+							if (error > 0 && !Controller.IsMinThrottle()) error += Controller.ThrottleDown();
+							else if (error < 0 && !Controller.IsMaxThrottle()) error += Controller.ThrottleUp();
+							if (error < Tolerance && error > Tolerance && error + PowerControllerMod.Settings.DesiredSurplus > 0) break;
+						}
+					}
+				}
+			}
+		}
+	}
 	public class CompPowerController : ThingComp
 	{
 		public float Throttle = 1.0f;

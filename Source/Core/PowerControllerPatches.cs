@@ -56,38 +56,4 @@ namespace PowerController
 			}
 		}
 	}
-
-	[HarmonyPatch(typeof(PowerNet), "PowerNetTick")]
-	class PowerNetPatch
-	{
-		private static float Tolerance => PowerControllerMod.Settings.Tolerance;
-		static void Postfix(ref PowerNet __instance)
-		{
-			float error = (__instance.CurrentEnergyGainRate() * 60000f) - PowerControllerMod.Settings.DesiredSurplus;
-			if (PowerControllerMod.Settings.FillBatteries && !__instance.batteryComps.TrueForAll(x => x.StoredEnergyPct == 1.0f))
-			{
-				foreach (CompPower compPower in __instance.powerComps)
-				{
-					CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
-					if (Controller != null && !Controller.IsMaxThrottle())
-					{
-						Controller.ThrottleUp();
-					}
-				}
-			}
-			else if (error > Tolerance || error < -Tolerance || error + PowerControllerMod.Settings.DesiredSurplus < 0)
-			{
-				foreach (CompPowerTrader compPower in __instance.powerComps)
-				{
-					CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
-					if (Controller != null)
-					{
-						if (error > 0 && !Controller.IsMinThrottle()) error += Controller.ThrottleDown();
-						else if (error < 0 && !Controller.IsMaxThrottle()) error += Controller.ThrottleUp();
-						if (error < Tolerance && error > Tolerance && error + PowerControllerMod.Settings.DesiredSurplus > 0) break;
-					}
-				}
-			}
-		}
-	}
 }
