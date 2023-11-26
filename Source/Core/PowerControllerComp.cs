@@ -15,28 +15,31 @@ namespace PowerController
 		{
 			foreach(PowerNet powerNet in map.powerNetManager.AllNetsListForReading)
 			{
-				float error = (powerNet.CurrentEnergyGainRate() * 60000f) - PowerControllerMod.Settings.DesiredSurplus;
-				if (PowerControllerMod.Settings.FillBatteries && !powerNet.batteryComps.TrueForAll(x => x.StoredEnergyPct == 1.0f))
+				if(powerNet.HasActivePowerSource)
 				{
-					foreach (CompPower compPower in powerNet.powerComps)
+					float error = (powerNet.CurrentEnergyGainRate() * 60000f) - PowerControllerMod.Settings.DesiredSurplus;
+					if (PowerControllerMod.Settings.FillBatteries && powerNet.batteryComps.Any(x => x.StoredEnergyPct < 1.0f))
 					{
-						CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
-						if (Controller != null && !Controller.IsMaxThrottle())
+						foreach (CompPower compPower in powerNet.powerComps)
 						{
-							Controller.ThrottleUp();
+							CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
+							if (Controller != null && !Controller.IsMaxThrottle())
+							{
+								Controller.ThrottleUp();
+							}
 						}
 					}
-				}
-				else if (error > Tolerance || error < -Tolerance || error + PowerControllerMod.Settings.DesiredSurplus < 0)
-				{
-					foreach (CompPowerTrader compPower in powerNet.powerComps)
+					else if (error > Tolerance || error < -Tolerance || error + PowerControllerMod.Settings.DesiredSurplus < 0)
 					{
-						CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
-						if (Controller != null)
+						foreach (CompPowerTrader compPower in powerNet.powerComps)
 						{
-							if (error > 0 && !Controller.IsMinThrottle()) error += Controller.ThrottleDown();
-							else if (error < 0 && !Controller.IsMaxThrottle()) error += Controller.ThrottleUp();
-							if (error < Tolerance && error > Tolerance && error + PowerControllerMod.Settings.DesiredSurplus > 0) break;
+							CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
+							if (Controller != null)
+							{
+								if (error > 0 && !Controller.IsMinThrottle()) error += Controller.ThrottleDown();
+								else if (error < 0 && !Controller.IsMaxThrottle()) error += Controller.ThrottleUp();
+								if (error < Tolerance && error > Tolerance && error + PowerControllerMod.Settings.DesiredSurplus > 0) break;
+							}
 						}
 					}
 				}
