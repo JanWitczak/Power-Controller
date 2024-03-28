@@ -10,4 +10,7 @@
 		<li IfModActive="VanillaExpanded.HelixienGas">VEHelixien</li>
 		<li IfModActive="Dubwise.Rimefeller">Rimefeller</li>
 	</v1.4>
+	<v1.5>
+		<li>1.5</li>
+	</v1.5>
 </loadFolders>
