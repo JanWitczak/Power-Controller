@@ -13,12 +13,12 @@ namespace PowerController
 		}
 		public override void MapComponentTick()
 		{
-			foreach(PowerNet powerNet in map.powerNetManager.AllNetsListForReading)
+			foreach (PowerNet powerNet in map.powerNetManager.AllNetsListForReading)
 			{
-				if(powerNet.HasActivePowerSource)
+				if (powerNet.HasActivePowerSource)
 				{
 					float error = (powerNet.CurrentEnergyGainRate() * 60000f) - PowerControllerMod.Settings.DesiredSurplus;
-					if (PowerControllerMod.Settings.FillBatteries && powerNet.batteryComps.Any(x => x.StoredEnergyPct < 1.0f))
+					if (PowerControllerMod.Settings.FillBatteries && powerNet.batteryComps.Any(x => x.AmountCanAccept > 0.0f))
 					{
 						foreach (CompPower compPower in powerNet.powerComps)
 						{
