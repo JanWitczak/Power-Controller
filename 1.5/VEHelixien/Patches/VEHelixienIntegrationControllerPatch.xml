@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+	<Operation Class="PatchOperationAdd">
+		<xpath>/Defs/ThingDef[defName="VHGE_HelixienGenerator" or defName="VHGE_IndustrialHelixienGenerator"]/comps</xpath>
+		<success>Always</success>
+		<value>
+			<li>
+				<compClass>PowerController.CompPowerController</compClass>
+			</li>
+			<li Class="CompProperties_Battery">
+				<compClass>PowerController.CompInternalBattery</compClass>
+				<storedEnergyMax>10</storedEnergyMax>
+				<efficiency>50</efficiency>
+			</li>
+		</value>
+	</Operation>
+</Patch>

@@ -2,15 +2,17 @@
 <loadFolders>
 	<v1.3>
 		<li>1.3</li>
-		<li IfModActive="VanillaExpanded.VFEPower">VEPower</li>
 	</v1.3>
 	<v1.4>
 		<li>1.4</li>
-		<li IfModActive="VanillaExpanded.VFEPower">VEPower</li>
-		<li IfModActive="VanillaExpanded.HelixienGas">VEHelixien</li>
-		<li IfModActive="Dubwise.Rimefeller">Rimefeller</li>
+		<li IfModActive="VanillaExpanded.VFEPower">1.4/VEPower</li>
+		<li IfModActive="VanillaExpanded.HelixienGas">1.4/VEHelixien</li>
+		<li IfModActive="Dubwise.Rimefeller">1.4/Rimefeller</li>
 	</v1.4>
 	<v1.5>
 		<li>1.5</li>
+		<li IfModActive="VanillaExpanded.VFEPower">1.5/VEPower</li>
+		<li IfModActive="VanillaExpanded.HelixienGas">1.5/VEHelixien</li>
+		<li IfModActive="Dubwise.Rimefeller">1.5/Rimefeller</li>
 	</v1.5>
 </loadFolders>
