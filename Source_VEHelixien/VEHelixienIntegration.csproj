@@ -8,15 +8,15 @@
 		<DebugType>none</DebugType>
 		<Optimize>true</Optimize>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>../Assemblies/</OutputPath>
+		<OutputPath>..\1.5\VEHelixien\Assemblies\</OutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.4.*" />
-		<PackageReference Include="Lib.Harmony" Version="2.2.2"/>
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.*" />
+		<PackageReference Include="Lib.Harmony" Version="2.3.*"/>
 		<Reference Include="PipeSystem.dll" Private="false"/>
 		<Reference Include="PowerController.dll">
-			<HintPath>..\..\1.5\Assemblies\PowerController.dll</HintPath>
+			<HintPath>..\1.5\Assemblies\PowerController.dll</HintPath>
 			<Private>false</Private>
 		</Reference>
 	</ItemGroup>

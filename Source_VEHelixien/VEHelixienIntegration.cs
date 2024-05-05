@@ -27,6 +27,5 @@ namespace PowerController
 				__result *= Controller.Throttle;
 			}
 		}
-	}
-	
+	}	
 }
