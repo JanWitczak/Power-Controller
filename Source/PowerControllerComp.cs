@@ -1,5 +1,6 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using Verse;
 
 namespace PowerController
@@ -48,33 +49,49 @@ namespace PowerController
 	}
 	public class CompPowerController : ThingComp
 	{
+		public float Step;
+		private float StepPercentage;
 		public float Throttle = 1.0f;
+		public bool Overriden = false;
+		public float ThrottleOverride = 0.0f;
 		private CompPowerTrader PowerTrader => parent.GetComp<CompPowerTrader>();
-		public void SetThrottle(float throttle)
+
+		public override void Initialize(CompProperties props)
 		{
+			base.Initialize(props);
+			if (-PowerTrader.Props.PowerConsumption >= 10000f) Step = 1000.0f;
+			if (-PowerTrader.Props.PowerConsumption >= 5000f) Step = 100.0f;
+			else Step = 10.0f;
+			StepPercentage = Step / -PowerTrader.Props.PowerConsumption;
+		}
+		public float SetThrottle(float throttle)
+		{
+			float adjustment = Throttle;
 			Throttle = throttle;
 			if (Throttle < PowerControllerMod.Settings.MinimalThrotle)
 			{
 				Throttle = PowerControllerMod.Settings.MinimalThrotle;
 			}
-			if (Throttle > PowerControllerMod.Settings.MaximalThrotle)
+			if (Throttle > 1.0f)
 			{
-				Throttle = PowerControllerMod.Settings.MaximalThrotle;
+				Throttle = 1.0f;
 			}
+			adjustment -= Throttle;
+			return -adjustment;
 		}
 		public float ThrottleUp()
 		{
-			SetThrottle(Throttle + (10f / -PowerTrader.Props.PowerConsumption));
-			return 10f;
+			float adjustment = SetThrottle(Throttle + StepPercentage);
+			return Step * (adjustment / StepPercentage);
 		}
 		public float ThrottleDown()
 		{
-			SetThrottle(Throttle - (10f / -PowerTrader.Props.PowerConsumption));
-			return -10f;
+			float adjustment = SetThrottle(Throttle - StepPercentage);
+			return Step * (adjustment / StepPercentage);
 		}
 		public bool IsMaxThrottle()
 		{
-			if (Throttle == PowerControllerMod.Settings.MaximalThrotle) return true;
+			if (Throttle == 1.0f) return true;
 			else return false;
 		}
 		public bool IsMinThrottle()
@@ -84,7 +101,8 @@ namespace PowerController
 		}
 		public override string CompInspectStringExtra()
 		{
-			return $"Throttle: {Throttle.ToStringPercent()}";
+			if (Overriden) return $"Throttle: {ThrottleOverride.ToStringPercent()} - Overriden";
+			else return $"Throttle: {Throttle.ToStringPercent()}";
 		}
 		public override void PostExposeData()
 		{

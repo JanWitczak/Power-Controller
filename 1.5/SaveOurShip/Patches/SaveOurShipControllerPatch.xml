@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Patch>
 	<Operation Class="PatchOperationAdd">
-		<xpath>/Defs/ThingDef[defName="VHGE_HelixienGenerator" or defName="VHGE_IndustrialHelixienGenerator"]/comps</xpath>
+		<xpath>Defs/ThingDef[defName="Ship_Reactor" or defName="Ship_Reactor_Small"]/comps</xpath>
 		<success>Always</success>
 		<value>
 			<li>

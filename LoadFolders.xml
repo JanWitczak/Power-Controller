@@ -14,5 +14,6 @@
 		<li IfModActive="VanillaExpanded.VFEPower">1.5/VEPower</li>
 		<li IfModActive="VanillaExpanded.HelixienGas">1.5/VEHelixien</li>
 		<li IfModActive="Dubwise.Rimefeller">1.5/Rimefeller</li>
+		<li IfModActive="kentington.saveourship2">1.5/SaveOurShip</li>
 	</v1.5>
 </loadFolders>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Patch>
 	<Operation Class="PatchOperationAdd">
-		<xpath>Defs/ThingDef/comps[li/compClass="CompPowerPlant" and li/@Class="CompProperties_Refuelable"]</xpath>
+		<xpath></xpath>Defs/ThingDef[defName="FuelPowerplant" or defName="LargeFuelPowerplant"]/comps</xpath>
+		<success>Always</success>
 		<value>
 			<li>
 				<compClass>PowerController.CompPowerController</compClass>

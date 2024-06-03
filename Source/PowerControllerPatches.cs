@@ -17,15 +17,15 @@ namespace PowerController
 		}
 	}
 
-	[HarmonyPatch(typeof(CompPowerPlant), "UpdateDesiredPowerOutput")]
+	[HarmonyPatch(typeof(CompPowerPlant), "get_DesiredPowerOutput")]
 	class PowerPlantPatch
 	{
-		static void Postfix(ref CompPowerPlant __instance)
+		static void Postfix(ref float __result, ref CompPowerPlant __instance)
 		{
 			CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
-			if (Controller != null && __instance.PowerOutput != 0)
+			if (Controller != null && !Controller.Overriden)
 			{
-				__instance.PowerOutput = (-__instance.Props.PowerConsumption) * Controller.Throttle;
+				__result *= Controller.Throttle;
 			}
 		}
 	}
