@@ -25,7 +25,7 @@ namespace PowerController
 			CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
 			if (Controller != null && !Controller.Overriden)
 			{
-				__result *= Controller.Throttle;
+				__result = (float)((double)__result * Controller.Throttle);
 			}
 		}
 	}
@@ -38,7 +38,7 @@ namespace PowerController
 			CompPowerController Controller = __instance.parent.GetComp<CompPowerController>();
 			if (Controller != null)
 			{
-				__result *= Controller.Throttle;
+				__result *= (float)Controller.Throttle;
 			}
 		}
 	}

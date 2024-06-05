@@ -23,7 +23,7 @@ namespace PowerController
 			listing_Standard.Label($"Desired Surplus: {Math.Max(Settings.DesiredSurplus - Settings.Tolerance, 0)}W - {Settings.DesiredSurplus + Settings.Tolerance}W");
 			Settings.DesiredSurplus = (float)Math.Round(listing_Standard.Slider(Settings.DesiredSurplus / 100f, 1, 50), 0) * 100f;
 			listing_Standard.Label($"Tolerance: {Settings.Tolerance}");
-			Settings.Tolerance = (float)Math.Round(listing_Standard.Slider(Settings.Tolerance / 10f, 1, 50), 0) * 10f;
+			Settings.Tolerance = (float)Math.Round(listing_Standard.Slider(Settings.Tolerance / 10f, 5, 50), 0) * 10f;
 			listing_Standard.Label($"Minimal Throtle: {Settings.MinimalThrotle * 100}%");
 			Settings.MinimalThrotle = (float)Math.Round(listing_Standard.Slider(Settings.MinimalThrotle, 0.1f, 1.0f), 1);
 			listing_Standard.CheckboxLabeled("Fill batteries first: ", ref Settings.FillBatteries, tooltip: "Fill batteries beffore throttling down generators.");

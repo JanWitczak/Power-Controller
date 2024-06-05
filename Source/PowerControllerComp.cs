@@ -18,7 +18,7 @@ namespace PowerController
 			{
 				if (powerNet.HasActivePowerSource)
 				{
-					float error = (powerNet.CurrentEnergyGainRate() * 60000f) - PowerControllerMod.Settings.DesiredSurplus;
+					double error = ((double)powerNet.CurrentEnergyGainRate() * 60000d) - PowerControllerMod.Settings.DesiredSurplus;
 					if (PowerControllerMod.Settings.FillBatteries && powerNet.batteryComps.Any(x => x.AmountCanAccept > 0.0f))
 					{
 						foreach (CompPower compPower in powerNet.powerComps)
@@ -51,7 +51,7 @@ namespace PowerController
 	{
 		public float Step;
 		private float StepPercentage;
-		public float Throttle = 1.0f;
+		public double Throttle = 1.0f;
 		public bool Overriden = false;
 		public float ThrottleOverride = 0.0f;
 		private CompPowerTrader PowerTrader => parent.GetComp<CompPowerTrader>();
@@ -59,14 +59,14 @@ namespace PowerController
 		public override void Initialize(CompProperties props)
 		{
 			base.Initialize(props);
-			if (-PowerTrader.Props.PowerConsumption >= 10000f) Step = 1000.0f;
-			if (-PowerTrader.Props.PowerConsumption >= 5000f) Step = 100.0f;
+			if (-PowerTrader.Props.PowerConsumption >= 10000f) Step = 50.0f;
+			if (-PowerTrader.Props.PowerConsumption >= 5000f) Step = 25.0f;
 			else Step = 10.0f;
 			StepPercentage = Step / -PowerTrader.Props.PowerConsumption;
 		}
-		public float SetThrottle(float throttle)
+		public double SetThrottle(double throttle)
 		{
-			float adjustment = Throttle;
+			double adjustment = Throttle;
 			Throttle = throttle;
 			if (Throttle < PowerControllerMod.Settings.MinimalThrotle)
 			{
@@ -79,14 +79,14 @@ namespace PowerController
 			adjustment -= Throttle;
 			return -adjustment;
 		}
-		public float ThrottleUp()
+		public double ThrottleUp()
 		{
-			float adjustment = SetThrottle(Throttle + StepPercentage);
+			double adjustment = SetThrottle(Throttle + StepPercentage);
 			return Step * (adjustment / StepPercentage);
 		}
-		public float ThrottleDown()
+		public double ThrottleDown()
 		{
-			float adjustment = SetThrottle(Throttle - StepPercentage);
+			double adjustment = SetThrottle(Throttle - StepPercentage);
 			return Step * (adjustment / StepPercentage);
 		}
 		public bool IsMaxThrottle()
@@ -102,7 +102,7 @@ namespace PowerController
 		public override string CompInspectStringExtra()
 		{
 			if (Overriden) return $"Throttle: {ThrottleOverride.ToStringPercent()} - Overriden";
-			else return $"Throttle: {Throttle.ToStringPercent()}";
+			else return $"Throttle: {((float)Throttle).ToStringPercent()}";
 		}
 		public override void PostExposeData()
 		{
