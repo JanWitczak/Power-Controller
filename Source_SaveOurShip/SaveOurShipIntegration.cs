@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using RimWorld;
 using SaveOurShip2;
-using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Verse;
@@ -29,12 +28,11 @@ namespace PowerController
 				if (__instance.overdriveSetting == 0)
 				{
 					Controller.Overriden = false;
-					Controller.ThrottleOverride = 0.0f;
 				}
 				else
 				{
 					Controller.Overriden = true;
-					Controller.ThrottleOverride = 1 + __instance.overdriveSetting * 2;
+					Controller.SetThrottle(1.0);
 				}
 			}
 		}

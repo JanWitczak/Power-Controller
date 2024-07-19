@@ -3,7 +3,6 @@ using Rimefeller;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Verse;
-using RimWorld;
 
 namespace PowerController
 {

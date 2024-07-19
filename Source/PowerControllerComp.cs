@@ -1,6 +1,8 @@
 ﻿using RimWorld;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
+using System.Linq;
+using UnityEngine;
 using Verse;
 
 namespace PowerController
@@ -49,20 +51,23 @@ namespace PowerController
 	}
 	public class CompPowerController : ThingComp
 	{
-		public float Step;
+		private float Step;
 		private float StepPercentage;
-		public double Throttle = 1.0f;
+		public double Throttle = 1.0;
+		public double ThrottleTarget = 1.0;
+		public bool AutomaticControl = true;
 		public bool Overriden = false;
-		public float ThrottleOverride = 0.0f;
 		private CompPowerTrader PowerTrader => parent.GetComp<CompPowerTrader>();
+		private Gizmo_Throttle Gizmo;
 
 		public override void Initialize(CompProperties props)
 		{
 			base.Initialize(props);
 			if (-PowerTrader.Props.PowerConsumption >= 10000f) Step = 50.0f;
-			if (-PowerTrader.Props.PowerConsumption >= 5000f) Step = 25.0f;
+			else if (-PowerTrader.Props.PowerConsumption >= 5000f) Step = 25.0f;
 			else Step = 10.0f;
 			StepPercentage = Step / -PowerTrader.Props.PowerConsumption;
+			Gizmo = new Gizmo_Throttle(this);
 		}
 		public double SetThrottle(double throttle)
 		{
@@ -91,25 +96,35 @@ namespace PowerController
 		}
 		public bool IsMaxThrottle()
 		{
-			if (Throttle == 1.0f) return true;
+			if (Throttle == 1.0f || !AutomaticControl || Overriden) return true;
 			else return false;
 		}
 		public bool IsMinThrottle()
 		{
-			if (Throttle == PowerControllerMod.Settings.MinimalThrotle) return true;
+			if (Throttle == PowerControllerMod.Settings.MinimalThrotle || !AutomaticControl || Overriden) return true;
 			else return false;
 		}
-		public override string CompInspectStringExtra()
+		public override void CompTick()
 		{
-			if (Overriden) return $"Throttle: {ThrottleOverride.ToStringPercent()} - Overriden";
-			else return $"Throttle: {((float)Throttle).ToStringPercent()}";
+			if (!AutomaticControl)
+			{
+				if (ThrottleTarget > Throttle + StepPercentage / 2) ThrottleUp();
+				else if (ThrottleTarget < Throttle - StepPercentage / 2) ThrottleDown();
+			}
+			else ThrottleTarget = Math.Round(Throttle, 1);
 		}
 		public override void PostExposeData()
 		{
-			Scribe_Values.Look(ref Throttle, "throttle");
+			Scribe_Values.Look(ref Throttle, "throttle", defaultValue: 1.0);
+			Scribe_Values.Look(ref ThrottleTarget, "target", defaultValue: 1.0);
+			Scribe_Values.Look(ref AutomaticControl, "automatic", defaultValue: true);
+			Scribe_Values.Look(ref Overriden, "overriden", defaultValue: false);
+		}
+		public override IEnumerable<Gizmo> CompGetGizmosExtra()
+		{
+			yield return Gizmo;
 		}
 	}
-
 	public class CompInternalBattery : CompPowerBattery
 	{
 		public override string CompInspectStringExtra()
@@ -118,7 +133,7 @@ namespace PowerController
 		}
 		public override IEnumerable<Gizmo> CompGetGizmosExtra()
 		{
-			return new List<Gizmo>();
+			return Enumerable.Empty<Gizmo>();
 		}
 		public override void PostExposeData()
 		{
@@ -132,6 +147,45 @@ namespace PowerController
 				Scribe_Values.Look(ref ReadEnergy, "storedPower");
 				AddEnergy(ReadEnergy);
 			}
+		}
+	}
+	public class Gizmo_Throttle : Gizmo_Slider
+	{
+		public Gizmo_Throttle(CompPowerController compPowerController)
+		{
+			PowerController = compPowerController;
+		}
+		private CompPowerController PowerController;
+		protected override float Target
+		{
+			get => (float)PowerController.ThrottleTarget;
+			set => PowerController.ThrottleTarget = value;
+		}
+
+		protected override float ValuePercent => (float)PowerController.Throttle;
+		protected override int Increments => 10;
+		protected override string Title
+		{
+			get => "Throttle".Translate();
+		}
+		protected override void DrawHeader(Rect headerRect, ref bool mouseOverElement)
+		{
+			base.DrawHeader(headerRect.LeftPart(0.8f), ref mouseOverElement);
+			Widgets.CheckboxLabeled(headerRect.RightPart(0.2f), "", ref PowerController.AutomaticControl);
+		}
+		protected override bool IsDraggable
+		{
+			get
+			{
+				if (PowerController.parent.Faction == Faction.OfPlayer && !PowerController.AutomaticControl) return true;
+				else return false;
+			}
+		}
+		protected override FloatRange DragRange => new FloatRange(PowerControllerMod.Settings.MinimalThrotle, 1.0f);
+
+		protected override string GetTooltip()
+		{
+			return "ThrottleDesc".Translate();
 		}
 	}
 }
