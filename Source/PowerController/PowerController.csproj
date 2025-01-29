@@ -2,22 +2,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-  		<TargetFramework>net472</TargetFramework>
+ 		<TargetFramework>net472</TargetFramework>
 		<Deterministic>true</Deterministic>
 		<Configuration>Release</Configuration>
 		<DebugType>none</DebugType>
 		<Optimize>true</Optimize>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>..\1.5\SaveOurShip\Assemblies\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<IsPublishable>False</IsPublishable>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>..\..\1.5\Assemblies\</OutputPath>
+		<IsPublishable>False</IsPublishable>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.*" />
-		<PackageReference Include="Lib.Harmony" Version="2.3.*"/>
-		<Reference Include="ShipsHaveInsides.dll" Private="false"/>
-		<Reference Include="PowerController.dll">
-			<HintPath>..\1.5\Assemblies\PowerController.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
+		<PackageReference Include="Lib.Harmony" Version="2.3.*" />
 	</ItemGroup>
 </Project>
