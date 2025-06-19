@@ -2,24 +2,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-  		<TargetFramework>net472</TargetFramework>
+  		<TargetFramework>net48</TargetFramework>
 		<Deterministic>true</Deterministic>
 		<Configuration>Release</Configuration>
 		<DebugType>none</DebugType>
 		<Optimize>true</Optimize>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<IsPublishable>False</IsPublishable>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<OutputPath>..\..\1.5\SaveOurShip\Assemblies\</OutputPath>
-		<IsPublishable>False</IsPublishable>
+		<Configurations>Release</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.*" />
-		<PackageReference Include="Lib.Harmony" Version="2.3.*" />
+		<PackageReference Include="Lib.Harmony" Version="2.3.6" />
 		<ProjectReference Include="..\PowerController\PowerController.csproj">
 		  <Private>False</Private>
 		  <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>

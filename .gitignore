@@ -362,6 +362,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-Source/VEPowerIntegration/VanillaPowerExpanded.dll
-Source/VEHelixienIntegration/PipeSystem.dll
-Source/RimefellerIntegration/Rimefeller.dll
+
+/Source/PowerControllerCompatibilityRimefeller/Rimefeller.dll
+/Source/PowerControllerCompatibilitySaveOurShip/ShipsHaveInsides.dll
+/Source/PowerControllerCompatibilityVEPower/VanillaPowerExpanded.dll
+/Source/PowerControllerCompatibilityVEPower/PipeSystem.dll
+/Source/PowerControllerCompatibilityVEHelixien/VHelixienGasE.dll
+/Source/PowerControllerCompatibilityVEHelixien/PipeSystem.dll
