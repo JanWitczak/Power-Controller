@@ -4,7 +4,7 @@ This is a mod for game RimWorld by Ludeon Studios.
 
 ## Description
 
-Makes fuelled power plants automatically throttle their power output to keep power production at desired surplus, and keep the batteries charged. The fuel consumption rate is adjusted proportionally. The throttle can also be set manually.
+This mod makes fuelled power plants automatically throttle their power output to keep power production at desired surplus, and keep the batteries charged. The fuel consumption rate is adjusted proportionally. The throttle can also be set manually.
 
 Settings allow to set the desired network surplus,
 The tolerance,
