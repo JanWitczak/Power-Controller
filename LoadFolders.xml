@@ -5,18 +5,19 @@
 	</v1.3>
 	<v1.4>
 		<li>1.4</li>
-		<li IfModActive="VanillaExpanded.VFEPower">1.4/VEPower</li>
-		<li IfModActive="VanillaExpanded.HelixienGas">1.4/VEHelixien</li>
 		<li IfModActive="Dubwise.Rimefeller">1.4/Rimefeller</li>
+		<li IfModActive="VanillaExpanded.HelixienGas">1.4/VEHelixien</li>
+		<li IfModActive="VanillaExpanded.VFEPower">1.4/VEPower</li>
 	</v1.4>
 	<v1.5>
 		<li>1.5</li>
-		<li IfModActive="VanillaExpanded.VFEPower">1.5/VEPower</li>
-		<li IfModActive="VanillaExpanded.HelixienGas">1.5/VEHelixien</li>
 		<li IfModActive="Dubwise.Rimefeller">1.5/Rimefeller</li>
 		<li IfModActive="kentington.saveourship2">1.5/SaveOurShip</li>
+		<li IfModActive="VanillaExpanded.HelixienGas">1.5/VEHelixien</li>
+		<li IfModActive="VanillaExpanded.VFEPower">1.5/VEPower</li>
 	</v1.5>
 	<v1.6>
 		<li>1.6</li>
+		<li IfModActive="Dubwise.Rimefeller">1.6/Rimefeller</li>
 	</v1.6>
 </loadFolders>

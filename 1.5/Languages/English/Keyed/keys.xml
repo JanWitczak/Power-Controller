@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+	<LanguageData>
+		<Throttle>Throttle</Throttle>
+		<ThrottleDesc>Generator throttle, if automatic control is disabled desired throttle can be set.</ThrottleDesc>
+	</LanguageData>
