@@ -8,11 +8,10 @@
 		<DebugType>none</DebugType>
 		<Optimize>true</Optimize>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Configurations>Release</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4491-beta" />
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4498-beta" />
 		<PackageReference Include="Lib.Harmony" Version="2.3.6" />
 		<ProjectReference Include="..\PowerController\PowerController.csproj">
 		  <Private>False</Private>

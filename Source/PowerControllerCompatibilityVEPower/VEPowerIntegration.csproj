@@ -8,7 +8,6 @@
 		<DebugType>none</DebugType>
 		<Optimize>true</Optimize>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Configurations>Release</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
