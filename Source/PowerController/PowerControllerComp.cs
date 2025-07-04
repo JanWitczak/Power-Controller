@@ -151,6 +151,7 @@ namespace PowerController
 	}
 	public class Gizmo_Throttle : Gizmo_Slider
 	{
+		private static bool draggingBar = false;
 		public Gizmo_Throttle(CompPowerController compPowerController)
 		{
 			PowerController = compPowerController;
@@ -160,6 +161,12 @@ namespace PowerController
 		{
 			get => (float)PowerController.ThrottleTarget;
 			set => PowerController.ThrottleTarget = value;
+		}
+
+		protected override bool DraggingBar
+		{
+			get => draggingBar;
+			set => draggingBar = value;
 		}
 
 		protected override float ValuePercent => (float)PowerController.Throttle;
@@ -175,11 +182,7 @@ namespace PowerController
 		}
 		protected override bool IsDraggable
 		{
-			get
-			{
-				if (PowerController.parent.Faction == Faction.OfPlayer && !PowerController.AutomaticControl) return true;
-				else return false;
-			}
+			get => (PowerController.parent.Faction == Faction.OfPlayer && !PowerController.AutomaticControl);
 		}
 		protected override FloatRange DragRange => new FloatRange(PowerControllerMod.Settings.MinimalThrotle, 1.0f);
 
