@@ -15,8 +15,6 @@
 		  <Private>False</Private>
 		  <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
 		</ProjectReference>
-		<Reference Include="Rimefeller.dll">
-		  <Private>False</Private>
-		</Reference>
+		<Reference Include="Rimefeller.dll" Private="False" />
 	</ItemGroup>
 </Project>

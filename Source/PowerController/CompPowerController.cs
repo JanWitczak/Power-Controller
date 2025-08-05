@@ -13,6 +13,7 @@ namespace PowerController
 		public double ThrottleTarget = 1.0;
 		public bool AutomaticControl = true;
 		public bool Overriden = false;
+		public bool ThrottleChanged = false;
 		private CompPowerTrader PowerTrader => parent.GetComp<CompPowerTrader>();
 		private Gizmo_Throttle Gizmo;
 
@@ -27,6 +28,7 @@ namespace PowerController
 		}
 		public double SetThrottle(double throttle)
 		{
+			ThrottleChanged = true;
 			double adjustment = Throttle;
 			Throttle = throttle;
 			if (Throttle < PowerControllerMod.Settings.MinimalThrotle)

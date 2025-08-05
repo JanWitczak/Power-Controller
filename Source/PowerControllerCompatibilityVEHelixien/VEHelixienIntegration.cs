@@ -10,13 +10,13 @@ namespace PowerController
 	{
 		static VEHelixienHarmonyPatches()
 		{
-			Harmony harmony = new Harmony("Azuraal.PowerController.VEPowerIntegration");
+			Harmony harmony = new Harmony("Azuraal.PowerController.VEHelixienIntegration");
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			harmony.PatchAll(assembly);
 		}
 	}
 
-	[HarmonyPatch(typeof(CompResourceTrader), "get_Consumption")]
+	[HarmonyPatch(typeof(CompResourceTrader), "get_BaseConsumption")]
 	class HelixienPowerPlantPatch
 	{
 		static void Postfix(ref float __result, ref CompResourceTrader __instance)
@@ -25,6 +25,11 @@ namespace PowerController
 			if (Controller != null)
 			{
 				__result *= (float)Controller.Throttle;
+				if (Controller.ThrottleChanged)
+				{
+					__instance.UsedLastTick = true;
+					Controller.ThrottleChanged = false;
+				}
 			}
 		}
 	}

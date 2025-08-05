@@ -23,6 +23,7 @@
 		<li>/</li>
 		<li>1.6</li>
 		<li IfModActive="Dubwise.Rimefeller">1.6/Rimefeller</li>
+		<li IfModActive="VanillaExpanded.HelixienGas">1.6/VEHelixien</li>
 		<li IfModActive="VanillaExpanded.VFEPower">1.6/VEPower</li>
 	</v1.6>
 </loadFolders>
