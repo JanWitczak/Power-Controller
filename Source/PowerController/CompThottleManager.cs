@@ -8,7 +8,7 @@ namespace PowerController
 	{
 		private static readonly int BaseTickDelay = 10;
 		private static readonly int LongTickDelay = 250;
-		private static float Tolerance => PowerControllerMod.Settings.Tolerance;
+		private static IntRange DesiredSurplus => PowerControllerMod.Settings.DesiredRange;
 		private int[] PowerNetDelays = null;
 		public ThrottleManager(Map map) : base(map)
 		{
@@ -30,42 +30,44 @@ namespace PowerController
 				PowerNet powerNet = map.powerNetManager.AllNetsListForReading[powerNetIndex];
 				if (powerNet.HasActivePowerSource)
 				{
-					double error = ((double)powerNet.CurrentEnergyGainRate() * 60000d) - PowerControllerMod.Settings.DesiredSurplus;
-					if (PowerControllerMod.Settings.FillBatteries && powerNet.batteryComps.Any(x => x.AmountCanAccept > 0.0f)) AdjustNetwork(powerNet, powerNetIndex, error, ThrottleAction.Charge);
-					else if (!NetworkIsNominal(error)) AdjustNetwork(powerNet, powerNetIndex, error, ThrottleAction.Balance);
+					bool chargeBatteries = false;
+					if (PowerControllerMod.Settings.FillBatteries && powerNet.batteryComps.Any(x => x.AmountCanAccept > 0.0f))
+					{
+						chargeBatteries = true;
+					}
+					double networkEnergyGainRate = ((double)powerNet.CurrentEnergyGainRate() * 60000d);
+					if (chargeBatteries || !NetworkIsNominal(networkEnergyGainRate))
+					{
+						bool AtCapacity = true;
+						foreach (CompPowerTrader compPower in powerNet.powerComps)
+						{
+							CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
+							if (Controller != null)
+							{
+								if (!Controller.IsMinThrottle() && !chargeBatteries && networkEnergyGainRate > DesiredSurplus.max)
+								{
+									networkEnergyGainRate += Controller.ThrottleDown();
+									if (!Controller.IsMinThrottle()) AtCapacity = false;
+								}
+								else if (!Controller.IsMaxThrottle() && (chargeBatteries || networkEnergyGainRate < DesiredSurplus.min))
+								{
+									networkEnergyGainRate += Controller.ThrottleUp();
+									if (!Controller.IsMaxThrottle()) AtCapacity = false;
+								}
+								if (NetworkIsNominal(networkEnergyGainRate)) break;
+							}
+						}
+						if (AtCapacity) PowerNetDelays[powerNetIndex] = LongTickDelay;
+						else PowerNetDelays[powerNetIndex] = BaseTickDelay;
+					}
 				}
 			}
 		}
-		private bool NetworkIsNominal(double error)
+		private bool NetworkIsNominal(double EnergyGainRate)
 		{
-			if (error > Tolerance || error < -Tolerance || error + PowerControllerMod.Settings.DesiredSurplus < 0) return false;
+			if (EnergyGainRate > DesiredSurplus.max || EnergyGainRate < DesiredSurplus.min) return false;
 			else return true;
 		}
-		private void AdjustNetwork(PowerNet powerNet, int powerNetIndex, double error, ThrottleAction action)
-		{
-			bool AtCapacity = true;
-			foreach (CompPowerTrader compPower in powerNet.powerComps)
-			{
-				CompPowerController Controller = compPower.parent.GetComp<CompPowerController>();
-				if (Controller != null)
-				{
-					if (error > 0 && !Controller.IsMinThrottle())
-					{
-						error += Controller.ThrottleDown();
-						if (!Controller.IsMinThrottle()) AtCapacity = false;
-					}
-					else if (error < 0 && !Controller.IsMaxThrottle())
-					{
-						error += Controller.ThrottleUp();
-						if (!Controller.IsMaxThrottle()) AtCapacity = false;
-					}
-					if (NetworkIsNominal(error)) break;
-				}
-			}
-			if (AtCapacity) PowerNetDelays[powerNetIndex] = LongTickDelay;
-			else PowerNetDelays[powerNetIndex] = BaseTickDelay;
-		}
-
 		private enum ThrottleAction
 		{
 			Balance,

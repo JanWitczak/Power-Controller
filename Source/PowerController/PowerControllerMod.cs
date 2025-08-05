@@ -20,27 +20,25 @@ namespace PowerController
 		{
 			Listing_Standard listing_Standard = new Listing_Standard();
 			listing_Standard.Begin(inRect);
-			listing_Standard.Label($"Desired Surplus: {Math.Max(Settings.DesiredSurplus - Settings.Tolerance, 0)}W - {Settings.DesiredSurplus + Settings.Tolerance}W");
-			Settings.DesiredSurplus = (float)Math.Round(listing_Standard.Slider(Settings.DesiredSurplus / 100f, 1, 50), 0) * 100f;
-			listing_Standard.Label($"Tolerance: {Settings.Tolerance}");
-			Settings.Tolerance = (float)Math.Round(listing_Standard.Slider(Settings.Tolerance / 10f, 5, 50), 0) * 10f;
+			listing_Standard.Label($"Desired Power Surplus: {Settings.DesiredRange.min}W - {Settings.DesiredRange.max}W");
+			listing_Standard.IntRange(ref Settings.DesiredRange, 50, 5000);
 			listing_Standard.Label($"Minimal Throtle: {Settings.MinimalThrotle * 100}%");
 			Settings.MinimalThrotle = (float)Math.Round(listing_Standard.Slider(Settings.MinimalThrotle, 0.1f, 1.0f), 1);
 			listing_Standard.CheckboxLabeled("Fill batteries first: ", ref Settings.FillBatteries, tooltip: "Fill batteries beffore throttling down generators.");
 			listing_Standard.End();
+			Settings.DesiredRange.min -= Settings.DesiredRange.min % 10;
+			Settings.DesiredRange.max -= Settings.DesiredRange.max % 10;
 		}
 	}
 
 	class PowerControllerSettings : ModSettings
 	{
-		public float DesiredSurplus = 1000f;
-		public float Tolerance = 10f;
+		public IntRange DesiredRange = new IntRange(500, 1500);
 		public float MinimalThrotle = 0.1f;
 		public bool FillBatteries = true;
 		public override void ExposeData()
 		{
-			Scribe_Values.Look(ref DesiredSurplus, "DesiredSurplus", defaultValue: 1000f);
-			Scribe_Values.Look(ref Tolerance, "Tolerance", defaultValue: 10f);
+			Scribe_Values.Look(ref DesiredRange, "DesiredRange", defaultValue: new IntRange(500, 1500));
 			Scribe_Values.Look(ref MinimalThrotle, "MinimalThrotle", defaultValue: 0.1f);
 			Scribe_Values.Look(ref FillBatteries, "FillBatteries", defaultValue: true);
 		}
