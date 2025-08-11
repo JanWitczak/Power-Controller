@@ -2,21 +2,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-  		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net48</TargetFramework>
 		<Deterministic>true</Deterministic>
 		<Configuration>Release</Configuration>
-		<DebugType>none</DebugType>
+		<DebugType>embedded</DebugType>
 		<Optimize>true</Optimize>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\PowerController\PowerController.csproj">
-		  <Private>False</Private>
-		  <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+			<Private>False</Private>
+			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
 		</ProjectReference>
 		<Reference Include="ShipsHaveInsides.dll">
-		  <Private>False</Private>
+			<Private>False</Private>
 		</Reference>
 	</ItemGroup>
 </Project>
